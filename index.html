@@ -564,63 +564,59 @@
     refreshSloganEchoSelects();
 
     // --------------------------------------------------------------
-    // 5. ИНТЕГРАЦИЯ ИСКУССТВЕННОГО ИНТЕЛЛЕКТА (Hugging Face)
+    // 5. ИНТЕГРАЦИЯ ИСКУССТВЕННОГО ИНТЕЛЛЕКТА (через Google Apps Script прокси)
     // --------------------------------------------------------------
-    // --------------------------------------------------------------
-// 5. ИНТЕГРАЦИЯ ИСКУССТВЕННОГО ИНТЕЛЛЕКТА (через Google Apps Script прокси)
-// --------------------------------------------------------------
-// ⬇️ ВСТАВЬТЕ СВОЙ URL ВЕБ-ПРИЛОЖЕНИЯ (из Apps Script)
-const PROXY_URL = 'https://script.google.com/macros/s/AKfycbwTY_cq0txySBMJTx91itZYvv0lBAmVX0fIAakKIsXdV8hZ-VM32SXXxt-d9v2HfRrs/exec';  // ЗАМЕНИТЕ
+    // ⬇️ ВСТАВЬТЕ СВОЙ URL ВЕБ-ПРИЛОЖЕНИЯ (полученный после развертывания в Apps Script)
+    const PROXY_URL = 'https://script.google.com/macros/s/AKfycbwTY_cq0txySBMJTx91itZYvv0lBAmVX0fIAakKIsXdV8hZ-VM32SXXxt-d9v2HfRrs/exec';  // ЗАМЕНИТЕ НА РЕАЛЬНЫЙ URL
 
-async function improveTextWithAI(originalText) {
-    const response = await fetch(PROXY_URL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ text: originalText })
-    });
-    
-    if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    
-    const result = await response.json();
-    if (!result.success) {
-        throw new Error(result.error || "Неизвестная ошибка прокси");
-    }
-    return result.text;
-}
-
-// Обработчик кнопки "Улучшить с помощью ИИ"
-const aiButton = document.getElementById("improveWithAI");
-if (aiButton) {
-    aiButton.addEventListener("click", async () => {
-        const textarea = document.getElementById("checkTextarea");
-        const originalText = textarea.value;
-        if (!originalText.trim()) {
-            alert("Пожалуйста, введите текст для улучшения.");
-            return;
+    async function improveTextWithAI(originalText) {
+        const response = await fetch(PROXY_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ text: originalText })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
         
-        const originalTextBtn = aiButton.innerText;
-        aiButton.innerText = "⏳ Обработка ИИ...";
-        aiButton.disabled = true;
-        
-        try {
-            const improved = await improveTextWithAI(originalText);
-            textarea.value = improved;
-            // Автоматически запустить проверку
-            document.getElementById("checkBtn").click();
-        } catch (err) {
-            console.error(err);
-            alert("Не удалось улучшить текст: " + err.message);
-        } finally {
-            aiButton.innerText = originalTextBtn;
-            aiButton.disabled = false;
+        const result = await response.json();
+        if (!result.success) {
+            throw new Error(result.error || "Неизвестная ошибка прокси");
         }
-    });
-}
+        return result.text;
+    }
+
+    const aiButton = document.getElementById("improveWithAI");
+    if (aiButton) {
+        aiButton.addEventListener("click", async () => {
+            const textarea = document.getElementById("checkTextarea");
+            const originalText = textarea.value;
+            if (!originalText.trim()) {
+                alert("Пожалуйста, введите текст для улучшения.");
+                return;
+            }
+            
+            const originalTextBtn = aiButton.innerText;
+            aiButton.innerText = "⏳ Обработка ИИ...";
+            aiButton.disabled = true;
+            
+            try {
+                const improved = await improveTextWithAI(originalText);
+                textarea.value = improved;
+                // Автоматически запустить проверку
+                document.getElementById("checkBtn").click();
+            } catch (err) {
+                console.error(err);
+                alert("Не удалось улучшить текст: " + err.message);
+            } finally {
+                aiButton.innerText = originalTextBtn;
+                aiButton.disabled = false;
+            }
+        });
+    }
 </script>
 </body>
 </html>
