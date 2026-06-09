@@ -205,26 +205,64 @@
         }
 
         @media (max-width: 700px) {
-            {
+    body {
+        padding: 1rem 0.8rem;
+    }
+    .format-menu {
+        gap: 0.6rem;
+    }
+    .format-btn {
+        flex: 0 1 auto;
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+    .mode-tabs {
+        gap: 0.8rem;
+    }
+    .mode-tab {
+        font-size: 0.9rem;
+        padding: 0.4rem 1rem;
+    }
+    button:not(.format-btn):not(.mode-tab) {
+        width: auto;
+        min-width: 140px;
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+        display: inline-block;
+        margin-top: 0.5rem;
+    }
+    input, textarea, select {
+        font-size: 16px;
+        padding: 0.7rem;
+    }
+    .flex-row {
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+    .flex-row > * {
+        width: 100%;
+    }
+    .panel {
+        padding: 1.2rem;
+    }
+    .report-item {
+        font-size: 0.85rem;
+    }
+    .generated-box {
+        font-size: 0.9rem;
+        padding: 0.8rem;
+    }
+    .header h1 {
+        font-size: 1.5rem;
+    }
+    .badge {
+        font-size: 0.7rem;
+    }
+    /* Добавленный отступ для заголовка на мобильных */
     .header {
         margin-top: 1.5rem;
     }
 }
-            body { padding: 1rem 0.8rem; }
-            .format-menu { gap: 0.6rem; }
-            .format-btn { flex: 0 1 auto; padding: 0.5rem 1rem; font-size: 0.85rem; }
-            .mode-tabs { gap: 0.8rem; }
-            .mode-tab { font-size: 0.9rem; padding: 0.4rem 1rem; }
-            button:not(.format-btn):not(.mode-tab) { width: auto; min-width: 140px; padding: 0.6rem 1.2rem; font-size: 0.9rem; display: inline-block; margin-top: 0.5rem; }
-            input, textarea, select { font-size: 16px; padding: 0.7rem; }
-            .flex-row { flex-direction: column; gap: 0.6rem; }
-            .flex-row > * { width: 100%; }
-            .panel { padding: 1.2rem; }
-            .report-item { font-size: 0.85rem; }
-            .generated-box { font-size: 0.9rem; padding: 0.8rem; }
-            .header h1 { font-size: 1.5rem; }
-            .badge { font-size: 0.7rem; }
-        }
         @media (max-width: 480px) {
             .format-btn { padding: 0.4rem 0.8rem; font-size: 0.75rem; }
             button:not(.format-btn):not(.mode-tab) { min-width: 120px; padding: 0.5rem 1rem; font-size: 0.85rem; }
