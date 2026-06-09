@@ -141,6 +141,13 @@
             background: #e5a80a;
             transform: translateY(-2px);
         }
+        .button-ai {
+            background: #8B5CF6;
+            color: white;
+        }
+        .button-ai:hover {
+            background: #7C3AED;
+        }
         .report {
             background: #f8fafc;
             border-radius: 24px;
@@ -193,6 +200,12 @@
             display: block;
             color: #2c3e4e;
         }
+        .button-group {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
         hr {
             margin: 1.5rem 0;
             border-color: #eef2f6;
@@ -205,71 +218,29 @@
         }
 
         @media (max-width: 700px) {
-    body {
-        padding: 1rem 0.8rem;
-    }
-    .format-menu {
-        gap: 0.6rem;
-    }
-    .format-btn {
-        flex: 0 1 auto;
-        padding: 0.5rem 1rem;
-        font-size: 0.85rem;
-    }
-    .mode-tabs {
-        gap: 0.8rem;
-    }
-    .mode-tab {
-        font-size: 0.9rem;
-        padding: 0.4rem 1rem;
-    }
-    button:not(.format-btn):not(.mode-tab) {
-        width: auto;
-        min-width: 140px;
-        padding: 0.6rem 1.2rem;
-        font-size: 0.9rem;
-        display: inline-block;
-        margin-top: 0.5rem;
-    }
-    input, textarea, select {
-        font-size: 16px;
-        padding: 0.7rem;
-    }
-    .flex-row {
-        flex-direction: column;
-        gap: 0.6rem;
-    }
-    .flex-row > * {
-        width: 100%;
-    }
-    .panel {
-        padding: 1.2rem;
-    }
-    .report-item {
-        font-size: 0.85rem;
-    }
-    .generated-box {
-        font-size: 0.9rem;
-        padding: 0.8rem;
-    }
-    .header h1 {
-        font-size: 1.5rem;
-    }
-    .badge {
-        font-size: 0.7rem;
-    }
-    /* Добавленный отступ для заголовка на мобильных */
-    .header {
-        margin-top: 1.5rem;
-    }
-}
+            body { padding: 1rem 0.8rem; }
+            .format-menu { gap: 0.6rem; }
+            .format-btn { flex: 0 1 auto; padding: 0.5rem 1rem; font-size: 0.85rem; }
+            .mode-tabs { gap: 0.8rem; }
+            .mode-tab { font-size: 0.9rem; padding: 0.4rem 1rem; }
+            button:not(.format-btn):not(.mode-tab) { width: auto; min-width: 140px; padding: 0.6rem 1.2rem; font-size: 0.9rem; display: inline-block; margin-top: 0.5rem; }
+            input, textarea, select { font-size: 16px; padding: 0.7rem; }
+            .flex-row { flex-direction: column; gap: 0.6rem; }
+            .flex-row > * { width: 100%; }
+            .panel { padding: 1.2rem; }
+            .report-item { font-size: 0.85rem; }
+            .generated-box { font-size: 0.9rem; padding: 0.8rem; }
+            .header h1 { font-size: 1.5rem; }
+            .badge { font-size: 0.7rem; }
+            .header { margin-top: 1.5rem; }
+            .button-group { flex-direction: column; }
+            .button-group button { width: 100%; }
+        }
         @media (max-width: 480px) {
             .format-btn { padding: 1.2rem 1.2rem; font-size: 1rem; }
             button:not(.format-btn):not(.mode-tab) { min-width: 120px; padding: 0.5rem 1rem; font-size: 0.85rem; }
             .mode-tab { font-size: 0.8rem; padding: 0.3rem 0.8rem; }
-            .header {
-        margin-top: 1.5rem;
-    }
+            .header { margin-top: 1.5rem; }
         }
     </style>
 </head>
@@ -297,7 +268,10 @@
     <div id="checkPanel" class="panel">
         <h3 style="margin-bottom: 0.8rem;">📝 Введите рекламный текст для анализа</h3>
         <textarea id="checkTextarea" rows="8" placeholder="Пример: «Не тратьте время на уборку — робот-пылесос уберется за вас! Интеллектуальный помощник. Мощность 4000 Па, HEPA 13 задерживает 99,95% аллергенов. С заботой о вас!»"></textarea>
-        <button id="checkBtn">Проверить текст</button>
+        <div class="button-group">
+            <button id="checkBtn">Проверить текст</button>
+            <button id="improveWithAI" class="button-ai">✨ Улучшить с помощью ИИ</button>
+        </div>
         <div id="reportContainer" class="report"></div>
         <div id="suggestionsContainer"></div>
     </div>
@@ -336,7 +310,6 @@
     // 1. РАСШИРЕННАЯ БАЗА ДАННЫХ ИССЛЕДОВАНИЯ
     // --------------------------------------------------------------
     const DATA = {
-        // слоганы по форматам (format_id)
         slogans: {
             1: [ 
                 "Не упустите ни единого солнечного лучика!", 
@@ -360,7 +333,6 @@
                 "Чистота с первого касания"
             ]
         },
-        // эхо-фразы по форматам
         echoPhrases: {
             1: [ 
                 "Приятных вам покупок! Уборка – это легко, когда у вас есть [model]", 
@@ -390,17 +362,12 @@
     let currentMode = "check";
 
     // --------------------------------------------------------------
-    // 2. ФУНКЦИИ ПРОВЕРКИ (мягкий подход, без жёсткого да/нет по слогану)
+    // 2. ФУНКЦИИ ПРОВЕРКИ
     // --------------------------------------------------------------
     function countTechTerms(text) {
         const regex = /\d+\s*(Па|мкм|%|см|кг|В|м\/с|л|Вт|м³\/ч)|HEPA|LiDAR|аквафильтр|турбощетка|\d+\s*-?\s*ступенчатый/i;
         const matches = text.match(regex) || [];
         return matches.length;
-    }
-
-    function hasSloganSoft(text) {
-        // система не даёт точного ответа, а только рекомендацию
-        return null; // всегда неопределённо
     }
 
     function hasEchoPhrase(text, formatId) {
@@ -429,7 +396,6 @@
         return /ваш дом|не тратьте время|получайте удовольствие|с заботой о вас|вам|вы отдыхаете/i.test(text);
     }
 
-    // генерация отчёта (без категоричного "слоган отсутствует")
     function generateReport(text, formatId) {
         const techCount = countTechTerms(text);
         const techOk = (techCount >= DATA.optTechTerms.min && techCount <= DATA.optTechTerms.max);
@@ -440,7 +406,6 @@
         const appealOk = hasAppeal(text);
 
         let reportHtml = `<div class="report-item"><strong>🔍 Результаты анализа</strong></div>`;
-        // Слоган: мягкая рекомендация (без ✅/❌)
         reportHtml += `<div class="report-item">📢 Слоган: <strong>рекомендуем самостоятельно проверить его наличие</strong>. Хороший слоган привлекает внимание, повышает запоминаемость до +50%. Примеры: «Не тратьте время», «Лёгкая уборка стала доступнее».</div>`;
         reportHtml += `<div class="report-item">${echoOk ? '✅' : '❌'} Эхо-фраза: ${echoOk ? 'присутствует' : 'не найдена'} ${!echoOk ? '<span class="bad">(потеря до 40-50% отклика)</span>' : ''}</div>`;
         reportHtml += `<div class="report-item">${techOk ? '✅' : '⚠️'} Технических терминов: ${techCount} (оптимум 5–7) ${techCount > 7 ? '<span class="bad">➜ перегрузка снижает вовлечение на 53%</span>' : techCount < 5 ? '<span class="warn">➜ добавьте 2–3 ключевых параметра</span>' : ''}</div>`;
@@ -453,7 +418,6 @@
 
     function getSuggestions(text, formatId) {
         let suggestions = [];
-        // совет про слоган (общий)
         suggestions.push(`📢 Убедитесь, что у текста есть яркий слоган (короткая фраза-призыв). Пример: «Не тратьте время на уборку — наш прибор сделает всё за вас!»`);
         if (!hasEchoPhrase(text, formatId)) {
             const echo = DATA.echoPhrases[formatId] || DATA.echoPhrases[2];
@@ -513,7 +477,7 @@
     }
 
     // --------------------------------------------------------------
-    // 4. UI ОБРАБОТЧИКИ
+    // 4. UI ОБРАБОТЧИКИ (базовые)
     // --------------------------------------------------------------
     function applyFormatUi() {
         document.querySelectorAll(".format-btn").forEach(btn => {
@@ -600,14 +564,72 @@
     refreshSloganEchoSelects();
 
     // --------------------------------------------------------------
-    // 5. ВОЗМОЖНОСТЬ ДОБАВЛЕНИЯ ИИ (комментарий)
+    // 5. ИНТЕГРАЦИЯ ИСКУССТВЕННОГО ИНТЕЛЛЕКТА (Hugging Face)
     // --------------------------------------------------------------
-    // Для интеграции ИИ (например, ChatGPT) потребуется:
-    // 1. Создать простой бэкенд (Node.js/Python) или использовать сервис типа Make.com / Zapier.
-    // 2. В этом бэкенде принимать запрос от фронта, отправлять его в OpenAI API и возвращать улучшенный текст.
-    // 3. На фронте добавить кнопку "Улучшить с помощью ИИ", которая отправит текущий текст на сервер.
-    // Без серверной части и API-ключа напрямую из браузера вызвать ИИ нельзя (проблемы CORS и безопасности).
-    // При желании можно подключить бесплатные модели (например, через Hugging Face inference API), но они менее качественны.
+    const HF_TOKEN = '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';   
+    const HF_MODEL = 'mistralai/Mistral-7B-Instruct-v0.2';
+
+    async function improveTextWithAI(originalText) {
+        const prompt = `Ты — эксперт по рекламе технических товаров. Улучши следующий рекламный текст для уборочной техники, сделай его более привлекательным, добавь олицетворение (например, "робот не заблудится", "пылесос сам отправится на базу"), сохрани ключевые технические характеристики (5–7 параметров). Ответь только улучшенным текстом, без пояснений. Ответь строго на русском языке, исключения - названия брендов и латинские буквы в исходном тексте. Исходный текст:\n\n${originalText}`;
+        
+        const response = await fetch(`https://api-inference.huggingface.co/models/${HF_MODEL}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${HF_TOKEN}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                inputs: prompt,
+                parameters: {
+                    max_new_tokens: 500,
+                    temperature: 0.7,
+                    return_full_text: false
+                }
+            })
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Ошибка API: ${response.status} ${errorText}`);
+        }
+        
+        const result = await response.json();
+        // Обработка разных форматов ответа
+        let improved = result[0]?.generated_text || result.generated_text || result;
+        if (typeof improved === 'object') improved = improved.generated_text;
+        return improved.trim();
+    }
+
+    // Обработчик кнопки "Улучшить с помощью ИИ"
+    const aiButton = document.getElementById("improveWithAI");
+    if (aiButton) {
+        aiButton.addEventListener("click", async () => {
+            const textarea = document.getElementById("checkTextarea");
+            const originalText = textarea.value;
+            if (!originalText.trim()) {
+                alert("Пожалуйста, введите текст для улучшения.");
+                return;
+            }
+            
+            // Блокируем кнопку и показываем статус
+            const originalTextBtn = aiButton.innerText;
+            aiButton.innerText = "⏳ Обработка ИИ...";
+            aiButton.disabled = true;
+            
+            try {
+                const improved = await improveTextWithAI(originalText);
+                textarea.value = improved;
+                // Автоматически запускаем проверку улучшенного текста
+                document.getElementById("checkBtn").click();
+            } catch (err) {
+                console.error(err);
+                alert("Не удалось улучшить текст: " + err.message + "\n\nПроверьте токен (он должен быть действительным) и интернет-соединение.");
+            } finally {
+                aiButton.innerText = originalTextBtn;
+                aiButton.disabled = false;
+            }
+        });
+    }
 </script>
 </body>
 </html>
