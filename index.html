@@ -566,70 +566,61 @@
     // --------------------------------------------------------------
     // 5. ИНТЕГРАЦИЯ ИСКУССТВЕННОГО ИНТЕЛЛЕКТА (Hugging Face)
     // --------------------------------------------------------------
-    const HF_TOKEN = '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';   
-    const HF_MODEL = 'mistralai/Mistral-7B-Instruct-v0.2';
+    // --------------------------------------------------------------
+// 5. ИНТЕГРАЦИЯ ИСКУССТВЕННОГО ИНТЕЛЛЕКТА (через Google Apps Script прокси)
+// --------------------------------------------------------------
+// ⬇️ ВСТАВЬТЕ СВОЙ URL ВЕБ-ПРИЛОЖЕНИЯ (из Apps Script)
+const PROXY_URL = 'https://script.google.com/macros/s/AKfycbwTY_cq0txySBMJTx91itZYvv0lBAmVX0fIAakKIsXdV8hZ-VM32SXXxt-d9v2HfRrs/exec';  // ЗАМЕНИТЕ
 
-    async function improveTextWithAI(originalText) {
-        const prompt = `Ты — эксперт по рекламе технических товаров. Улучши следующий рекламный текст для уборочной техники, сделай его более привлекательным, добавь олицетворение (например, "робот не заблудится", "пылесос сам отправится на базу"), сохрани ключевые технические характеристики (5–7 параметров). Ответь только улучшенным текстом, без пояснений. Ответь строго на русском языке, исключения - названия брендов и латинские буквы в исходном тексте. Исходный текст:\n\n${originalText}`;
-        
-        const response = await fetch(`https://api-inference.huggingface.co/models/${HF_MODEL}`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${HF_TOKEN}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                inputs: prompt,
-                parameters: {
-                    max_new_tokens: 500,
-                    temperature: 0.7,
-                    return_full_text: false
-                }
-            })
-        });
-        
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Ошибка API: ${response.status} ${errorText}`);
+async function improveTextWithAI(originalText) {
+    const response = await fetch(PROXY_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ text: originalText })
+    });
+    
+    if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    const result = await response.json();
+    if (!result.success) {
+        throw new Error(result.error || "Неизвестная ошибка прокси");
+    }
+    return result.text;
+}
+
+// Обработчик кнопки "Улучшить с помощью ИИ"
+const aiButton = document.getElementById("improveWithAI");
+if (aiButton) {
+    aiButton.addEventListener("click", async () => {
+        const textarea = document.getElementById("checkTextarea");
+        const originalText = textarea.value;
+        if (!originalText.trim()) {
+            alert("Пожалуйста, введите текст для улучшения.");
+            return;
         }
         
-        const result = await response.json();
-        // Обработка разных форматов ответа
-        let improved = result[0]?.generated_text || result.generated_text || result;
-        if (typeof improved === 'object') improved = improved.generated_text;
-        return improved.trim();
-    }
-
-    // Обработчик кнопки "Улучшить с помощью ИИ"
-    const aiButton = document.getElementById("improveWithAI");
-    if (aiButton) {
-        aiButton.addEventListener("click", async () => {
-            const textarea = document.getElementById("checkTextarea");
-            const originalText = textarea.value;
-            if (!originalText.trim()) {
-                alert("Пожалуйста, введите текст для улучшения.");
-                return;
-            }
-            
-            // Блокируем кнопку и показываем статус
-            const originalTextBtn = aiButton.innerText;
-            aiButton.innerText = "⏳ Обработка ИИ...";
-            aiButton.disabled = true;
-            
-            try {
-                const improved = await improveTextWithAI(originalText);
-                textarea.value = improved;
-                // Автоматически запускаем проверку улучшенного текста
-                document.getElementById("checkBtn").click();
-            } catch (err) {
-                console.error(err);
-                alert("Не удалось улучшить текст: " + err.message + "\n\nПроверьте токен (он должен быть действительным) и интернет-соединение.");
-            } finally {
-                aiButton.innerText = originalTextBtn;
-                aiButton.disabled = false;
-            }
-        });
-    }
+        const originalTextBtn = aiButton.innerText;
+        aiButton.innerText = "⏳ Обработка ИИ...";
+        aiButton.disabled = true;
+        
+        try {
+            const improved = await improveTextWithAI(originalText);
+            textarea.value = improved;
+            // Автоматически запустить проверку
+            document.getElementById("checkBtn").click();
+        } catch (err) {
+            console.error(err);
+            alert("Не удалось улучшить текст: " + err.message);
+        } finally {
+            aiButton.innerText = originalTextBtn;
+            aiButton.disabled = false;
+        }
+    });
+}
 </script>
 </body>
 </html>
