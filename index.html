@@ -5,122 +5,509 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Конструктор рекламы уборочной техники | Проверка и генерация</title>
     <style>
-        /* (стили такие же, как в вашем последнем коде, без изменений) */
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Segoe UI',Roboto,sans-serif;background:#f5f7fa;color:#1e2a3a;line-height:1.5;padding:2rem 1rem}
-        .container{max-width:1300px;margin:0 auto}
-        .header{text-align:center;margin-bottom:2rem}
-        .header h1{font-size:2rem;background:linear-gradient(135deg,#1e2a3a 0%,#2c3e4e 100%);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-0.5px}
-        .header h1 span{color:#f5b81b}
-        .badge{background:#f5b81b20;display:inline-block;padding:0.3rem 1rem;border-radius:40px;font-size:0.8rem;color:#c17e0a;margin-top:0.5rem;font-weight:500}
-        .format-menu{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:2rem}
-        .format-btn{background:white;border:2px solid #e2e8f0;padding:0.8rem 1.8rem;border-radius:60px;font-weight:600;font-size:1rem;cursor:pointer;transition:all 0.2s;color:#2d3e50}
-        .format-btn.active{background:#f5b81b;border-color:#f5b81b;color:#1e2a3a;box-shadow:0 4px 10px rgba(245,184,27,0.3)}
-        .mode-tabs{display:flex;gap:1rem;justify-content:center;margin-bottom:2rem;border-bottom:2px solid #e2e8f0;padding-bottom:0.5rem}
-        .mode-tab{font-size:1.1rem;font-weight:600;padding:0.5rem 1.2rem;border-radius:40px;cursor:pointer;background:transparent}
-        .mode-tab.active{background:#1e2a3a;color:white}
-        .panel{background:white;border-radius:32px;box-shadow:0 12px 30px rgba(0,0,0,0.05);padding:2rem;margin-bottom:2rem}
-        textarea,input,select{width:100%;padding:1rem;border-radius:20px;border:1px solid #cbd5e1;font-family:inherit;font-size:1rem;margin-bottom:1rem}
-        button{background:#f5b81b;border:none;padding:0.8rem 1.8rem;border-radius:40px;font-weight:bold;font-size:1rem;cursor:pointer}
-        .report{background:#f8fafc;border-radius:24px;padding:1.5rem;margin-top:1.5rem;border-left:6px solid #f5b81b}
-        .suggestion{background:#fff9e8;padding:1rem;border-radius:20px;margin-top:1rem}
-        .generated-box{background:#f1f5f9;padding:1.5rem;border-radius:20px;white-space:pre-wrap;margin:1rem 0}
-        .flex-row{display:flex;gap:1rem;flex-wrap:wrap}
-        .select-label{font-size:0.85rem;font-weight:600;margin-bottom:0.3rem}
-        .footer{text-align:center;font-size:0.8rem;color:#5c6f87;margin-top:2rem}
-        @media (max-width:700px){
-            body{padding:1rem 0.8rem}
-            .format-btn{padding:0.5rem 1rem;font-size:0.85rem}
-            .mode-tab{font-size:0.9rem;padding:0.4rem 1rem}
-            .panel{padding:1.2rem}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f5f7fa;
+            color: #1e2a3a;
+            line-height: 1.5;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .header h1 {
+            font-size: 2rem;
+            color: #1e2a3a;
+            letter-spacing: -0.5px;
+        }
+        .header h1 span {
+            color: #f5b81b;
+        }
+        .badge {
+            background: #f5b81b20;
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            color: #c17e0a;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        .format-menu {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        .format-btn {
+            background: white;
+            border: 2px solid #e2e8f0;
+            padding: 0.8rem 1.8rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #2d3e50;
+        }
+        .format-btn.active {
+            background: #f5b81b;
+            border-color: #f5b81b;
+            color: #1e2a3a;
+            box-shadow: 0 4px 10px rgba(245,184,27,0.3);
+        }
+        .format-btn:hover:not(.active) {
+            border-color: #f5b81b;
+            background: #fef7e0;
+        }
+
+        .mode-tabs {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+        .mode-tab {
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            cursor: pointer;
+            background: transparent;
+            transition: 0.2s;
+        }
+        .mode-tab.active {
+            background: #1e2a3a;
+            color: white;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.05);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        textarea, input, select {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 20px;
+            border: 1px solid #cbd5e1;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: 0.2s;
+            margin-bottom: 1rem;
+        }
+        textarea:focus, input:focus, select:focus {
+            outline: none;
+            border-color: #f5b81b;
+            box-shadow: 0 0 0 3px #f5b81b30;
+        }
+        button {
+            background: #f5b81b;
+            border: none;
+            padding: 0.8rem 1.8rem;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #1e2a3a;
+        }
+        button:hover {
+            background: #e5a80a;
+            transform: translateY(-2px);
+        }
+        .report {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border-left: 6px solid #f5b81b;
+        }
+        .report-item {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            gap: 0.8rem;
+            align-items: baseline;
+            flex-wrap: wrap;
+        }
+        .report-item:last-child {
+            border: none;
+        }
+        .good { color: #2b7e3a; font-weight: 500; }
+        .bad { color: #c2410c; }
+        .warn { color: #e68a2e; }
+        .suggestion {
+            background: #fff9e8;
+            padding: 1rem;
+            border-radius: 20px;
+            margin-top: 1rem;
+        }
+        .generated-box {
+            background: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 20px;
+            white-space: pre-wrap;
+            font-family: inherit;
+            margin: 1rem 0;
+            border: 1px solid #e2e8f0;
+        }
+        .flex-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        .flex-row > * {
+            flex: 1;
+        }
+        .select-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            display: block;
+            color: #2c3e4e;
+        }
+        .button-group {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+        .footer {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #5c6f87;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 700px) {
+            body { padding: 1rem 0.8rem; }
+            .format-menu { gap: 0.6rem; }
+            .format-btn { flex: 0 1 auto; padding: 0.5rem 1rem; font-size: 0.85rem; }
+            .mode-tabs { gap: 0.8rem; }
+            .mode-tab { font-size: 0.9rem; padding: 0.4rem 1rem; }
+            button:not(.format-btn):not(.mode-tab) { width: auto; min-width: 140px; padding: 0.6rem 1.2rem; font-size: 0.9rem; display: inline-block; margin-top: 0.5rem; }
+            input, textarea, select { font-size: 16px; padding: 0.7rem; }
+            .flex-row { flex-direction: column; gap: 0.6rem; }
+            .flex-row > * { width: 100%; }
+            .panel { padding: 1.2rem; }
+            .report-item { font-size: 0.85rem; }
+            .generated-box { font-size: 0.9rem; padding: 0.8rem; }
+            .header h1 { font-size: 1.5rem; }
+            .badge { font-size: 0.7rem; }
+            .header { margin-top: 1.5rem; }
+            .button-group { flex-direction: column; }
+            .button-group button { width: 100%; }
+        }
+        @media (max-width: 480px) {
+            .format-btn { padding: 1rem 1rem; font-size: 0.9rem; }
+            button:not(.format-btn):not(.mode-tab) { min-width: 120px; padding: 0.5rem 1rem; font-size: 0.85rem; }
+            .mode-tab { font-size: 0.8rem; padding: 0.3rem 0.8rem; }
+            .header { margin-top: 1.5rem; }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="header"><h1><span>Конструктор</span> рекламы уборочной техники</h1><div class="badge">Проверка и генерация рекламных текстов</div></div>
+    <div class="header">
+        <h1><span>Конструктор</span> рекламы уборочной техники</h1>
+        <div class="badge">Проверка и генерация рекламных текстов для социальных сетей</div>
+    </div>
+
     <div class="format-menu">
         <button class="format-btn" data-format="1">📢 Акция / скидка</button>
         <button class="format-btn active" data-format="2">📦 Описание товара</button>
         <button class="format-btn" data-format="3">🎬 Короткий видео-ролик (клип)</button>
     </div>
+
     <div class="mode-tabs">
         <div class="mode-tab active" data-mode="check">🔍 Проверить мой текст</div>
         <div class="mode-tab" data-mode="generate">✨ Сгенерировать текст</div>
     </div>
+
+    <!-- панель ПРОВЕРКА ТЕКСТА -->
     <div id="checkPanel" class="panel">
-        <h3>📝 Введите рекламный текст для анализа</h3>
-        <textarea id="checkTextarea" rows="8" placeholder="Пример: «Не тратьте время на уборку — робот-пылесос уберется за вас! Интеллектуальный помощник. Мощность 4000 Па, HEPA 13... С заботой о вас!»"></textarea>
-        <button id="checkBtn">Проверить текст</button>
+        <h3 style="margin-bottom: 0.8rem;">📝 Введите рекламный текст для анализа</h3>
+        <textarea id="checkTextarea" rows="8" placeholder="Пример: «Не тратьте время на уборку — робот-пылесос уберется за вас! Интеллектуальный помощник. Мощность 4000 Па, HEPA 13 задерживает 99,95% аллергенов. С заботой о вас!»"></textarea>
+        <div class="button-group">
+            <button id="checkBtn">Проверить текст</button>
+        </div>
         <div id="reportContainer" class="report"></div>
         <div id="suggestionsContainer"></div>
     </div>
-    <div id="generatePanel" class="panel" style="display:none">
-        <h3>⚙️ Сгенерировать рекламный текст</h3>
-        <input type="text" id="brandName" placeholder="Бренд" value="Kärcher">
-        <input type="text" id="modelName" placeholder="Модель (RCV 5, DS 6 Plus...)">
-        <textarea id="techSpecs" rows="4" placeholder="Технические характеристики (каждая с новой строки)"></textarea>
+
+    <!-- панель ГЕНЕРАЦИЯ ТЕКСТА -->
+    <div id="generatePanel" class="panel" style="display: none;">
+        <h3 style="margin-bottom: 0.8rem;">⚙️ Сгенерировать рекламный текст по параметрам</h3>
+        <input type="text" id="brandName" placeholder="Название компании / бренда (например, Kärcher)" value="Kärcher">
+        <input type="text" id="modelName" placeholder="Название модели (например, RCV 5, DS 6 Plus, WV 7)">
+        <textarea id="techSpecs" rows="4" placeholder="Технические характеристики (каждая с новой строки)&#10;Пример:&#10;4000 Па сила всасывания&#10;HEPA 13 фильтр&#10;LiDAR навигация"></textarea>
+        
         <div class="flex-row">
-            <div style="flex:1"><div class="select-label">Выбрать слоган</div><select id="sloganSelect"></select></div>
-            <div style="flex:1"><div class="select-label">Выбрать эхо-фразу</div><select id="echoSelect"></select></div>
+            <div style="flex:1">
+                <div class="select-label">Выбрать заголовок (слоган)</div>
+                <select id="sloganSelect"></select>
+            </div>
+            <div style="flex:1">
+                <div class="select-label">Выбрать эхо-фразу</div>
+                <select id="echoSelect"></select>
+            </div>
         </div>
+        
         <button id="generateBtn">Собрать текст</button>
-        <div id="generatedTextArea" class="generated-box" style="display:none"></div>
-        <button id="copyGeneratedBtn" style="background:#2c3e4e;color:white;display:none">📋 Скопировать</button>
+        <div id="generatedTextArea" class="generated-box" style="display: none;"></div>
+        <button id="copyGeneratedBtn" style="background: #2c3e4e; color: white; margin-top: 0.5rem; display: none;">📋 Скопировать текст</button>
     </div>
-    <div class="footer">🧪 Оптимально 5–7 технических терминов · слоган + эхо-фраза +50% вовлечения · олицетворения +60%</div>
+
+    <div class="footer">
+        🧪 А Вы знали, что в такой рекламе оптимально 5–7 технических терминов, слоган и эхо-фраза повышают вовлечение до +50%, а олицетворения дают +60%?
+    </div>
 </div>
+
 <script>
-    const DATA={
-        slogans:{1:["Не упустите ни единого солнечного лучика!","Лёгкая уборка стала доступнее","Встречаем новый сезон скидками"],2:["Не тратьте время на уборку, [model] уберется за вас!","С этим прибором вам больше не придется мыть полы руками","Всем, кто заботится о чистоте, [brand] рекомендует"],3:["Он убирает, вы отдыхаете","Уборка – это легко с [model]","Нажми кнопку – наслаждайся чистотой"]},
-        echoPhrases:{1:["Приятных вам покупок!","С заботой о вас и чистоте дома!","Выбирайте лучшее – [brand]"],2:["С заботой о вас, [brand]","[model] уберётся за вас!","Доверьте уборку профессионалу – [brand]"],3:["Он убирает, вы отдыхаете","С заботой о вас, [brand]","Почувствуйте разницу с [brand]"]},
-        personificationKeywords:/не заблудится|не подведёт|трудяга|умница|помощник/i,
-        optTechTerms:{min:5,max:7}
+    // --------------------------------------------------------------
+    // 1. БАЗА ДАННЫХ (из исследования)
+    // --------------------------------------------------------------
+    const DATA = {
+        slogans: {
+            1: [ "Не упустите ни единого солнечного лучика!", "Лёгкая уборка стала доступнее", "Встречаем новый сезон скидками", "Спешите: выгода до ЦИФРА% на технику для дома", "Чистота без лишних трат – только сегодня" ],
+            2: [ "Не тратьте время на уборку, [model] уберется за вас!", "С этим прибором вам больше не придется мыть полы руками", "Всем, кто заботится о чистоте и свежем воздухе дома, [brand] рекомендует…", "Интеллектуальный помощник для вашего дома", "Профессиональная чистота без усилий – теперь у вас дома" ],
+            3: [ "Он убирает, вы отдыхаете", "Уборка – это легко, когда у вас есть [model]", "Нажми кнопку – наслаждайся чистотой", "Технологии, которые заботятся о вашем времени", "Чистота с первого касания" ]
+        },
+        echoPhrases: {
+            1: [ "Приятных вам покупок! Уборка – это легко, когда у вас есть [model]", "С заботой о вас и чистоте вашего дома!", "С заботой о вас и ваших зимних каникулах!", "Выбирайте лучшее – выбирайте [brand]", "Ваш дом заслуживает чистоты, а вы – отдыха" ],
+            2: [ "С заботой о вас, [brand]", "[model] уберётся за вас!", "Прощайте, разводы! С [model] ваша ванная комната будет сиять!", "Доверьте уборку профессионалу – [brand]" ],
+            3: [ "Он убирает, вы отдыхаете", "С заботой о вас, [brand]", "Почувствуйте разницу с [brand]" ]
+        },
+        personificationKeywords: /не заблудится|не подведёт|трудяга|умница|помощник|не упадёт|сам отправится|робот убирается|шyстрый трудяга/i,
+        antonymPatterns: /в отличие от традиционных|эффективней по сравнению с|старый способ|останется в прошлом|ведро и тряпка/i,
+        optTechTerms: { min: 5, max: 7 }
     };
-    let currentFormatId=2, currentMode="check";
-    function countTechTerms(t){return (t.match(/\d+\s*(Па|мкм|%|см|кг|В|м\/с|HEPA|LiDAR)/gi)||[]).length}
-    function hasEchoPhrase(t,id){let e=DATA.echoPhrases[id]||[]; return e.some(e=>t.includes(e.replace(/\[[^\]]+\]/g,'').trim()))||/с заботой о вас|приятных вам покупок/i.test(t)}
-    function hasPersonification(t){return DATA.personificationKeywords.test(t)}
-    function hasStructuredList(t){return /(^|\n)[\*\-•]\s|\n\d+\.\s/.test(t)}
-    function generateReport(t,id){
-        let tc=countTechTerms(t), techOk=tc>=5&&tc<=7, echoOk=hasEchoPhrase(t,id), persOk=hasPersonification(t), structOk=hasStructuredList(t);
-        return `<div class="report-item"><strong>🔍 Результаты</strong></div>
-                <div class="report-item">📢 Слоган: проверьте наличие сами. Пример: «Не тратьте время».</div>
-                <div class="report-item">${echoOk?'✅':'❌'} Эхо-фраза: ${echoOk?'есть':'нет'} ${!echoOk?'<span class="bad">(-40%)</span>':''}</div>
-                <div class="report-item">${techOk?'✅':'⚠️'} Техтерминов: ${tc} (оптимум 5–7) ${tc>7?'➜ перегрузка -53%':tc<5?'➜ добавьте 2-3':''}</div>
-                <div class="report-item">${persOk?'✅':'❌'} Олицетворение: ${persOk?'есть (+60%)':'можно добавить'}</div>
-                <div class="report-item">${structOk?'✅':'⚠️'} Структура: ${structOk?'список':'сплошной текст'}</div>`;
+
+    let currentFormatId = 2;
+    let currentMode = "check";
+
+    // --------------------------------------------------------------
+    // 2. ФУНКЦИИ ПРОВЕРКИ
+    // --------------------------------------------------------------
+    function countTechTerms(text) {
+        const regex = /\d+\s*(Па|мкм|%|см|кг|В|м\/с|л|Вт|м³\/ч)|HEPA|LiDAR|аквафильтр|турбощетка|\d+\s*-?\s*ступенчатый/i;
+        const matches = text.match(regex) || [];
+        return matches.length;
     }
-    function getSuggestions(t,id){
-        let s=[];
-        if(!hasEchoPhrase(t,id)) s.push(`💡 Эхо-фраза: ${DATA.echoPhrases[id][0]}`);
-        let tc=countTechTerms(t);
-        if(tc>7) s.push(`💡 Уменьшите термины до 5–7 (сейчас ${tc})`);
-        if(tc<3&&tc>0) s.push(`💡 Добавьте 2–3 характеристики с выгодой`);
-        if(!hasPersonification(t)) s.push(`💡 Олицетворение: «робот не заблудится» (+60%)`);
-        if(!hasStructuredList(t)) s.push(`💡 Разбейте на маркированный список`);
-        return s;
+
+    function hasEchoPhrase(text, formatId) {
+        const echoes = DATA.echoPhrases[formatId] || [];
+        const hasDirect = echoes.some(e => {
+            const clean = e.replace(/\[model\]|\[brand\]|\[…\]/gi, '').replace(/\s+/g, ' ').trim();
+            return clean.length > 5 && text.includes(clean);
+        });
+        const hasCare = /с заботой о вас|забота о чистоте|приятных вам покупок/i.test(text);
+        return hasDirect || hasCare;
     }
-    function buildGeneratedText(){
-        let brand=document.getElementById("brandName").value.trim()||"Kärcher", model=document.getElementById("modelName").value.trim()||"[модель]";
-        let specs=document.getElementById("techSpecs").value.split(/\r?\n/).filter(s=>s.trim());
-        let slogan=document.getElementById("sloganSelect").value.replace(/\[model\]/g,model).replace(/\[brand\]/g,brand);
-        let echo=document.getElementById("echoSelect").value.replace(/\[model\]/g,model).replace(/\[brand\]/g,brand);
-        let main=specs.length? (currentFormatId===1||currentFormatId===2? "\n"+specs.map(s=>`• ${s}`).join("\n"): "\n"+specs.join(". ")) : "\n• Высокое качество\n• Экономия времени";
-        return `${slogan}\n${main}\n\n${echo}`;
+
+    function hasPersonification(text) {
+        return DATA.personificationKeywords.test(text);
     }
-    function refreshSelects(){
-        let s=DATA.slogans[currentFormatId]||DATA.slogans[2], e=DATA.echoPhrases[currentFormatId]||DATA.echoPhrases[2];
-        document.getElementById("sloganSelect").innerHTML=s.map(v=>`<option value="${v.replace(/"/g,'&quot;')}">${v}</option>`).join("");
-        document.getElementById("echoSelect").innerHTML=e.map(v=>`<option value="${v.replace(/"/g,'&quot;')}">${v}</option>`).join("");
+
+    function hasStructuredList(text) {
+        return /(^|\n)[\*\-•]\s|\n\d+\.\s/.test(text);
     }
-    function applyFormat(){ document.querySelectorAll(".format-btn").forEach(b=>b.classList.toggle("active",Number(b.dataset.format)===currentFormatId)); if(currentMode==="generate") refreshSelects(); else{ document.getElementById("reportContainer").innerHTML=""; document.getElementById("suggestionsContainer").innerHTML="";} }
-    function switchMode(m){ currentMode=m; document.getElementById("checkPanel").style.display=m==="check"?"block":"none"; document.getElementById("generatePanel").style.display=m==="generate"?"block":"none"; if(m==="generate"){ refreshSelects(); document.getElementById("generatedTextArea").style.display="none"; document.getElementById("copyGeneratedBtn").style.display="none";} document.querySelectorAll(".mode-tab").forEach(t=>t.classList.toggle("active",(m==="check"&&t.innerText.includes("Проверить"))||(m==="generate"&&t.innerText.includes("Сгенерировать")))); }
-    document.getElementById("checkBtn").onclick=()=>{ let t=document.getElementById("checkTextarea").value; if(!t.trim()){ document.getElementById("reportContainer").innerHTML="<div>⚠️ Введите текст</div>"; return;} document.getElementById("reportContainer").innerHTML=generateReport(t,currentFormatId); let s=getSuggestions(t,currentFormatId); document.getElementById("suggestionsContainer").innerHTML=`<div class="suggestion"><strong>📌 Рекомендации</strong><br>${s.length?s.map(s=>`• ${s}`).join("<br>"):"✅ Отлично!"}</div>`; };
-    document.getElementById("generateBtn").onclick=()=>{ let g=buildGeneratedText(); let div=document.getElementById("generatedTextArea"); div.innerText=g; div.style.display="block"; let btn=document.getElementById("copyGeneratedBtn"); btn.style.display="inline-block"; btn.onclick=()=>{ navigator.clipboard.writeText(g); alert("Скопировано"); }; };
-    document.querySelectorAll(".format-btn").forEach(b=>b.onclick=()=>{ currentFormatId=Number(b.dataset.format); applyFormat(); if(currentMode==="generate") refreshSelects(); });
-    document.querySelectorAll(".mode-tab").forEach(t=>t.onclick=()=>{ switchMode(t.innerText.includes("Проверить")?"check":"generate"); });
-    applyFormat(); switchMode("check"); refreshSelects();
+
+    function hasAntithesis(text) {
+        return DATA.antonymPatterns.test(text);
+    }
+
+    function hasAppeal(text) {
+        return /ваш дом|не тратьте время|получайте удовольствие|с заботой о вас|вам|вы отдыхаете/i.test(text);
+    }
+
+    function generateReport(text, formatId) {
+        const techCount = countTechTerms(text);
+        const techOk = (techCount >= DATA.optTechTerms.min && techCount <= DATA.optTechTerms.max);
+        const echoOk = hasEchoPhrase(text, formatId);
+        const personOk = hasPersonification(text);
+        const structOk = hasStructuredList(text);
+        const antithesisOk = hasAntithesis(text);
+        const appealOk = hasAppeal(text);
+
+        let reportHtml = `<div class="report-item"><strong>🔍 Результаты анализа</strong></div>`;
+        reportHtml += `<div class="report-item">📢 Слоган: <strong>рекомендуем самостоятельно проверить его наличие</strong>. Хороший слоган привлекает внимание, повышает запоминаемость до +50%. Примеры: «Не тратьте время», «Лёгкая уборка стала доступнее».</div>`;
+        reportHtml += `<div class="report-item">${echoOk ? '✅' : '❌'} Эхо-фраза: ${echoOk ? 'присутствует' : 'не найдена'} ${!echoOk ? '<span class="bad">(потеря до 40-50% отклика)</span>' : ''}</div>`;
+        reportHtml += `<div class="report-item">${techOk ? '✅' : '⚠️'} Технических терминов: ${techCount} (оптимум 5–7) ${techCount > 7 ? '<span class="bad">➜ перегрузка снижает вовлечение на 53%</span>' : techCount < 5 ? '<span class="warn">➜ добавьте 2–3 ключевых параметра</span>' : ''}</div>`;
+        reportHtml += `<div class="report-item">${personOk ? '✅' : '❌'} Олицетворение: ${personOk ? 'есть (+60% вовлечения)' : 'нет — можно добавить "робот не заблудится", "пылесос не подведёт"'}</div>`;
+        reportHtml += `<div class="report-item">${structOk ? '✅' : '⚠️'} Структурированность: ${structOk ? 'маркированный список' : 'сплошной текст (снижает читаемость)'}</div>`;
+        reportHtml += `<div class="report-item">${antithesisOk ? '✅' : '○'} Антонимы/сравнение: ${antithesisOk ? 'есть (эффективно для контраста)' : 'можно добавить "в отличие от традиционных" или "ведро и тряпка останутся в прошлом"'}</div>`;
+        reportHtml += `<div class="report-item">${appealOk ? '✅' : '○'} Обращение к потребителю: ${appealOk ? 'присутствует' : 'добавьте "ваш дом", "не тратьте время" для доверительной тональности'}</div>`;
+        return reportHtml;
+    }
+
+    function getSuggestions(text, formatId) {
+        let suggestions = [];
+        suggestions.push(`📢 Убедитесь, что у текста есть яркий слоган (короткая фраза-призыв). Пример: «Не тратьте время на уборку — наш прибор сделает всё за вас!»`);
+        if (!hasEchoPhrase(text, formatId)) {
+            const echo = DATA.echoPhrases[formatId] || DATA.echoPhrases[2];
+            suggestions.push(`💡 Эхо-фраза: ${echo[0]}`);
+        }
+        const techCount = countTechTerms(text);
+        if (techCount > 7) suggestions.push(`💡 Уменьшите технические термины до 5–7 (сейчас ${techCount}), оставьте только ключевые с пояснением выгоды.`);
+        if (techCount < 3 && techCount > 0) suggestions.push(`💡 Добавьте 2–3 технические характеристики с выгодой (например, "4000 Па — справится с любым мусором").`);
+        if (!hasPersonification(text)) suggestions.push(`💡 Попробуйте олицетворение: «робот не заблудится», «пылесос сам отправится на базу», «наш трудяга» (+60% вовлечения).`);
+        if (!hasStructuredList(text)) suggestions.push(`💡 Разбейте текст на маркированный список: • пункт 1  • пункт 2`);
+        if (!hasAntithesis(text)) suggestions.push(`💡 Противопоставление: «В отличие от обычной швабры, электрошвабра Kärcher справляется на 20% быстрее».`);
+        return suggestions;
+    }
+
+    // --------------------------------------------------------------
+    // 3. ГЕНЕРАЦИЯ ТЕКСТА
+    // --------------------------------------------------------------
+    function buildGeneratedText() {
+        const brand = document.getElementById("brandName").value.trim() || "Kärcher";
+        const model = document.getElementById("modelName").value.trim();
+        const modelDisplay = model || "[модель]";
+        const rawSpecs = document.getElementById("techSpecs").value;
+        let specsList = rawSpecs.split(/\r?\n/).filter(s => s.trim().length > 0);
+        const selectedSloganRaw = document.getElementById("sloganSelect").value;
+        const selectedEchoRaw = document.getElementById("echoSelect").value;
+        
+        let slogan = selectedSloganRaw
+            .replace(/\[model\]/g, modelDisplay)
+            .replace(/\[brand\]/g, brand);
+        let echo = selectedEchoRaw
+            .replace(/\[model\]/g, modelDisplay)
+            .replace(/\[brand\]/g, brand)
+            .replace(/\[…\]/g, brand);
+        
+        let mainText = "";
+        if (specsList.length > 0) {
+            if (currentFormatId === 1 || currentFormatId === 2) {
+                mainText = "\n" + specsList.map(s => `• ${s}`).join("\n");
+            } else {
+                mainText = "\n" + specsList.join(". ");
+            }
+        } else {
+            mainText = "\n• Высокое качество очистки\n• Экономия времени";
+        }
+        
+        let finalText = `${slogan}\n${mainText}\n\n${echo}`;
+        return finalText;
+    }
+
+    function refreshSloganEchoSelects() {
+        const sloganSelect = document.getElementById("sloganSelect");
+        const echoSelect = document.getElementById("echoSelect");
+        const slogansArray = DATA.slogans[currentFormatId] || DATA.slogans[2];
+        const echoesArray = DATA.echoPhrases[currentFormatId] || DATA.echoPhrases[2];
+        sloganSelect.innerHTML = slogansArray.map(s => `<option value="${s.replace(/"/g, '&quot;')}">${s}</option>`).join("");
+        echoSelect.innerHTML = echoesArray.map(e => `<option value="${e.replace(/"/g, '&quot;')}">${e}</option>`).join("");
+    }
+
+    // --------------------------------------------------------------
+    // 4. UI ОБРАБОТЧИКИ
+    // --------------------------------------------------------------
+    function applyFormatUi() {
+        document.querySelectorAll(".format-btn").forEach(btn => {
+            if (Number(btn.dataset.format) === currentFormatId) btn.classList.add("active");
+            else btn.classList.remove("active");
+        });
+        if (currentMode === "generate") refreshSloganEchoSelects();
+        if (currentMode === "check") {
+            document.getElementById("reportContainer").innerHTML = "";
+            document.getElementById("suggestionsContainer").innerHTML = "";
+        }
+    }
+
+    function switchMode(mode) {
+        currentMode = mode;
+        const checkPanel = document.getElementById("checkPanel");
+        const genPanel = document.getElementById("generatePanel");
+        if (mode === "check") {
+            checkPanel.style.display = "block";
+            genPanel.style.display = "none";
+        } else {
+            checkPanel.style.display = "none";
+            genPanel.style.display = "block";
+            refreshSloganEchoSelects();
+            document.getElementById("generatedTextArea").style.display = "none";
+            document.getElementById("copyGeneratedBtn").style.display = "none";
+        }
+        document.querySelectorAll(".mode-tab").forEach(tab => {
+            if ((mode === "check" && tab.innerText.includes("Проверить")) ||
+                (mode === "generate" && tab.innerText.includes("Сгенерировать"))) {
+                tab.classList.add("active");
+            } else tab.classList.remove("active");
+        });
+    }
+
+    document.getElementById("checkBtn").addEventListener("click", () => {
+        const text = document.getElementById("checkTextarea").value;
+        if (!text.trim()) {
+            document.getElementById("reportContainer").innerHTML = "<div class='report-item'>⚠️ Введите текст для проверки.</div>";
+            document.getElementById("suggestionsContainer").innerHTML = "";
+            return;
+        }
+        const reportHtml = generateReport(text, currentFormatId);
+        const suggestions = getSuggestions(text, currentFormatId);
+        let sugHtml = `<div class="suggestion"><strong>📌 Рекомендации по улучшению:</strong><br>`;
+        if (suggestions.length === 0) sugHtml += `✅ Текст уже близок к эталону!`;
+        else sugHtml += suggestions.map(s => `• ${s}`).join("<br>");
+        sugHtml += `</div>`;
+        document.getElementById("reportContainer").innerHTML = reportHtml;
+        document.getElementById("suggestionsContainer").innerHTML = sugHtml;
+    });
+
+    document.getElementById("generateBtn").addEventListener("click", () => {
+        const generated = buildGeneratedText();
+        const genDiv = document.getElementById("generatedTextArea");
+        genDiv.innerText = generated;
+        genDiv.style.display = "block";
+        const copyBtn = document.getElementById("copyGeneratedBtn");
+        copyBtn.style.display = "inline-block";
+        copyBtn.onclick = () => {
+            navigator.clipboard.writeText(generated).then(() => {
+                alert("Текст скопирован в буфер обмена!");
+            }).catch(() => alert("Не удалось скопировать"));
+        };
+    });
+
+    document.querySelectorAll(".format-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            currentFormatId = Number(btn.dataset.format);
+            applyFormatUi();
+            if (currentMode === "generate") refreshSloganEchoSelects();
+        });
+    });
+
+    document.querySelectorAll(".mode-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+            if (tab.innerText.includes("Проверить")) switchMode("check");
+            else switchMode("generate");
+        });
+    });
+
+    applyFormatUi();
+    switchMode("check");
+    refreshSloganEchoSelects();
 </script>
 </body>
 </html>
